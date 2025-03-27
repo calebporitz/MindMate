@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">MindMate</string>
+    <string-array name="course_options">
+        <item>Mathematics</item>
+        <item>Physics</item>
+        <item>Computer Science</item>
+        <item>Chemistry</item>
+        <item>Biology</item>
+    </string-array>
+</resources>
