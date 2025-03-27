@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
         // Find UI elements
         textUserName = findViewById(R.id.userName);
         textUserEmail = findViewById(R.id.userEmail);
-        textCurrentlyStudying = findViewById(R.id.currentlyStudying); // Find TextView
+        textCurrentlyStudying = findViewById(R.id.currentlyStudying);
         Button btnSetStatus = findViewById(R.id.btnSetStatus);
         Button btnDeleteAccount = findViewById(R.id.btnDeleteAccount);
         Button btnLogout = findViewById(R.id.btnLogout);
@@ -55,11 +56,23 @@ public class ProfileActivity extends AppCompatActivity {
         // Load user information, including status
         loadUserInfo();
 
+        // Remove top bar if present
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+
         // Button click listeners
         btnSetStatus.setOnClickListener(v -> showStatusDialog());
         btnDeleteAccount.setOnClickListener(v -> showDeleteAccountDialog());
         btnLogout.setOnClickListener(v -> showLogoutDialog());
         btnResetPassword.setOnClickListener(v -> showResetPasswordDialog());
+
+        // Set up Settings Navigation
+        ImageButton btnSettings = findViewById(R.id.btnSettings);
+        btnSettings.setOnClickListener(v -> {
+            Intent intent new Intent(ProfileActivity.this, SettingsActivity.class);
+            startActivity(intent);
+        });
 
         // Set up bottom navigation bar buttons
         ImageButton navSearching = findViewById(R.id.nav_find);
