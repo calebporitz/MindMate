@@ -1,9 +1,8 @@
 package com.example.mindmate;
 
-import com.google.firebase.firestore.DocumentSnapshot;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -12,56 +11,75 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import com.bumptech.glide.Glide;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    private TextView textUserName, textUserEmail;
+    private TextView textUserName, textUserEmail, textCurrentlyStudying;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private FirebaseUser currentUser;
-    private TextView textCurrentlyStudying;
+
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private ImageView profileImage;
+    private Uri selectedImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // Initialize Firebase Auth and Firestore
+        // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
         currentUser = mAuth.getCurrentUser();
 
-        // Find UI elements
-        textUserName = findViewById(R.id.userName);
+        // Find views
+        textUserName = findViewById(R.id.fullName);
         textUserEmail = findViewById(R.id.userEmail);
-        textCurrentlyStudying = findViewById(R.id.currentlyStudying); // Find TextView
+        textCurrentlyStudying = findViewById(R.id.currentlyStudying);
+        profileImage = findViewById(R.id.profileImage);
+
         Button btnSetStatus = findViewById(R.id.btnSetStatus);
         Button btnDeleteAccount = findViewById(R.id.btnDeleteAccount);
         Button btnLogout = findViewById(R.id.btnLogout);
         Button btnResetPassword = findViewById(R.id.btnResetPassword);
+        Button btnSetProfilePicture = findViewById(R.id.btnSetProfilePicture);
 
-        // Load user information, including status
+        // Load user info
         loadUserInfo();
 
-        // Button click listeners
+        // Button listeners
         btnSetStatus.setOnClickListener(v -> showStatusDialog());
         btnDeleteAccount.setOnClickListener(v -> showDeleteAccountDialog());
         btnLogout.setOnClickListener(v -> showLogoutDialog());
         btnResetPassword.setOnClickListener(v -> showResetPasswordDialog());
+        btnSetProfilePicture.setOnClickListener(v -> openImageChooser());
 
-        // Set up bottom navigation bar buttons
+        // Settings button
+        ImageButton btnSettings = findViewById(R.id.btnSettings);
+        btnSettings.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
+            startActivity(intent);
+        });
+
+        // Bottom nav
         ImageButton navSearching = findViewById(R.id.nav_find);
         navSearching.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileActivity.this, SearchingActivity.class);
@@ -76,6 +94,85 @@ public class ProfileActivity extends AppCompatActivity {
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            selectedImageUri = data.getData();
+            profileImage.setImageURI(selectedImageUri); // Shows the selected image
+
+            // Optional: upload to Firebase Storage
+            uploadProfilePictureToFirebase();
+        }
+    }
+
+    private void loadUserInfo() {
+        if (currentUser != null) {
+            String userEmail = currentUser.getEmail();
+            textUserEmail.setText(userEmail);
+
+            db.collection("users").whereEqualTo("email", userEmail)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                            for (DocumentSnapshot document : task.getResult()) {
+                                String fullName = document.getString("fullName");
+                                textUserName.setText(fullName != null ? fullName : "Unnamed User");
+
+                                String studyStatus = document.getString("studyStatus");
+                                if (studyStatus != null && !studyStatus.isEmpty()) {
+                                    textCurrentlyStudying.setText("📖 " + studyStatus);
+                                } else {
+                                    textCurrentlyStudying.setText("📖 Currently studying");
+                                }
+
+                                // Load profile picture if it exists
+                                String profilePicUrl = document.getString("profilePictureUrl");
+                                if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
+                                    Glide.with(this).load(profilePicUrl).into(profileImage);
+                                }
+                            }
+                        } else {
+                            textUserName.setText("Unknown User");
+                            Toast.makeText(ProfileActivity.this, "Failed to load user info", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            textUserEmail.setText("No user logged in");
+            textUserName.setText("Unknown User");
+        }
+    }
+
+    private void openImageChooser() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+    }
+
+    private void uploadProfilePictureToFirebase() {
+        if (selectedImageUri == null || currentUser == null) return;
+
+        String userId = currentUser.getUid();
+        StorageReference storageRef = FirebaseStorage.getInstance()
+                .getReference("profile_pictures/" + userId + ".jpg");
+
+        storageRef.putFile(selectedImageUri)
+                .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String downloadUrl = uri.toString();
+
+                    // Update the user's document directly using UID
+                    db.collection("users").document(userId)
+                            .update("profilePictureUrl", downloadUrl)
+                            .addOnSuccessListener(aVoid -> Log.d("ProfileActivity", "Profile picture URL saved"))
+                            .addOnFailureListener(e -> Log.e("ProfileActivity", "Failed to save picture URL", e));
+                }))
+                .addOnFailureListener(e -> {
+                    Toast.makeText(ProfileActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
+                    Log.e("ProfileActivity", "Storage upload failed", e);
+                });
+    }
+
 
     private void showStatusDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -95,9 +192,9 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-
         builder.show();
     }
+
     private void updateStudyStatus(String status) {
         if (currentUser == null) {
             Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
@@ -110,77 +207,38 @@ public class ProfileActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
                         for (DocumentSnapshot document : task.getResult()) {
-                            String username = document.getId(); // Get the username as document ID
-                            db.collection("users").document(username)
+                            db.collection("users").document(document.getId())
                                     .update("studyStatus", status)
                                     .addOnSuccessListener(aVoid -> {
                                         textCurrentlyStudying.setText("📖 " + status);
                                         Toast.makeText(ProfileActivity.this, "Status updated!", Toast.LENGTH_SHORT).show();
                                     })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(ProfileActivity.this, "Failed to update status", Toast.LENGTH_SHORT).show();
-                                    });
+                                    .addOnFailureListener(e -> Toast.makeText(ProfileActivity.this, "Failed to update status", Toast.LENGTH_SHORT).show());
                         }
                     } else {
                         Toast.makeText(ProfileActivity.this, "User not found in Firestore", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
-    private void loadUserInfo() {
-        if (currentUser != null) {
-            String userEmail = currentUser.getEmail();
-            textUserEmail.setText(userEmail);
-
-            db.collection("users").whereEqualTo("email", userEmail)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                            for (DocumentSnapshot document : task.getResult()) {
-                                String username = document.getString("username");
-                                textUserName.setText(username);
-
-                                // Load Study Status
-                                String studyStatus = document.getString("studyStatus");
-                                if (studyStatus != null && !studyStatus.isEmpty()) {
-                                    textCurrentlyStudying.setText("📖 " + studyStatus);
-                                } else {
-                                    textCurrentlyStudying.setText("📖 Currently studying");
-                                }
-                            }
-                        } else {
-                            textUserName.setText("Unknown User");
-                            Toast.makeText(ProfileActivity.this, "Failed to load username", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        } else {
-            textUserEmail.setText("No user logged in");
-            textUserName.setText("Unknown User");
-        }
-    }
-
 
     private void showResetPasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Reset Password");
         builder.setMessage("Enter your current password and new password.");
 
-        // Create a layout for the dialog
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        // Current Password input
         final EditText inputCurrentPassword = new EditText(this);
         inputCurrentPassword.setHint("Current Password");
         inputCurrentPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         layout.addView(inputCurrentPassword);
 
-        // New Password input
         final EditText inputNewPassword = new EditText(this);
         inputNewPassword.setHint("New Password");
         inputNewPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         layout.addView(inputNewPassword);
 
-        // Repeat New Password input
         final EditText inputRepeatPassword = new EditText(this);
         inputRepeatPassword.setHint("Repeat New Password");
         inputRepeatPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -188,7 +246,6 @@ public class ProfileActivity extends AppCompatActivity {
 
         builder.setView(layout);
 
-        // Confirm button
         builder.setPositiveButton("Change Password", (dialog, which) -> {
             String currentPassword = inputCurrentPassword.getText().toString().trim();
             String newPassword = inputNewPassword.getText().toString().trim();
@@ -205,9 +262,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        // Cancel button
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-
         builder.show();
     }
 
@@ -218,12 +273,10 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         String userEmail = currentUser.getEmail();
-
-        // Re-authenticate the user before changing the password
         AuthCredential credential = EmailAuthProvider.getCredential(userEmail, currentPassword);
+
         currentUser.reauthenticate(credential).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                // Update the password
                 currentUser.updatePassword(newPassword).addOnCompleteListener(updateTask -> {
                     if (updateTask.isSuccessful()) {
                         Toast.makeText(ProfileActivity.this, "Password updated successfully!", Toast.LENGTH_LONG).show();
@@ -236,30 +289,23 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
     }
+
     private void showLogoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Log Out");
         builder.setMessage("Are you sure you want to log out?");
-
-        // Log Out button
         builder.setPositiveButton("Log Out", (dialog, which) -> logoutUser());
-
-        // Cancel button
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-
-        // Show the dialog
         builder.show();
     }
 
     private void logoutUser() {
-        mAuth.signOut(); // Logs the user out of Firebase
+        mAuth.signOut();
         Toast.makeText(ProfileActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-
-        // Redirect to LoginActivity
         Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        finish(); // Close ProfileActivity
+        finish();
     }
 
     private void showDeleteAccountDialog() {
@@ -267,24 +313,20 @@ public class ProfileActivity extends AppCompatActivity {
         builder.setTitle("Delete Account");
         builder.setMessage("This action is permanent. Enter your password and check the box to confirm.");
 
-        // Create a layout for the dialog
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        // Password input
         final EditText inputPassword = new EditText(this);
         inputPassword.setHint("Enter your password");
         inputPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         layout.addView(inputPassword);
 
-        // Confirmation checkbox
         final CheckBox confirmCheckBox = new CheckBox(this);
         confirmCheckBox.setText("I understand that this action is permanent.");
         layout.addView(confirmCheckBox);
 
         builder.setView(layout);
 
-        // Confirm button
         builder.setPositiveButton("Delete", (dialog, which) -> {
             String password = inputPassword.getText().toString().trim();
             boolean isChecked = confirmCheckBox.isChecked();
@@ -296,9 +338,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        // Cancel button
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
-
         builder.show();
     }
 
@@ -309,23 +349,26 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         String userEmail = currentUser.getEmail();
-
-        // Re-authenticate the user before deleting
         AuthCredential credential = EmailAuthProvider.getCredential(userEmail, password);
+
         currentUser.reauthenticate(credential).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                // Delete user from Firestore
-                db.collection("users").document(userEmail).delete()
-                        .addOnSuccessListener(aVoid -> Log.d("ProfileActivity", "User data deleted from Firestore"))
+                // Delete all documents in "users" where email == userEmail
+                db.collection("users")
+                        .whereEqualTo("email", userEmail)
+                        .get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                                db.collection("users").document(doc.getId()).delete();
+                            }
+                        })
                         .addOnFailureListener(e -> Log.e("ProfileActivity", "Error deleting Firestore data", e));
 
-                // Delete user from Firebase Authentication
+                // Delete user from Firebase Auth
                 currentUser.delete().addOnCompleteListener(deleteTask -> {
                     if (deleteTask.isSuccessful()) {
                         Toast.makeText(ProfileActivity.this, "Account deleted successfully", Toast.LENGTH_LONG).show();
-                        mAuth.signOut(); // Log out the user
-
-                        // Redirect to login screen
+                        mAuth.signOut();
                         Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
