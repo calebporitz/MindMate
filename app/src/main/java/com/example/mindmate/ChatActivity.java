@@ -33,7 +33,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat); // Make sure your layout has the correct IDs
+        setContentView(R.layout.activity_chat);
 
         messageInput = findViewById(R.id.message_input);
         sendButton = findViewById(R.id.send_button);
