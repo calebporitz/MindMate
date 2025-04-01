@@ -57,6 +57,8 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     implementation("com.google.firebase:firebase-firestore:24.10.0")
     implementation("com.google.firebase:firebase-storage:20.2.1")
+    implementation("com.google.firebase:firebase-database:20.1.0")
+    implementation(libs.firebase.database)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

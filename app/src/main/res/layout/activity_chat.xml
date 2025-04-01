@@ -1,68 +1,60 @@
-<androidx.constraintlayout.widget.ConstraintLayout
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_yellow">
+    android:background="#F2FFCF">
 
+    <!-- Title Text (must be a direct child) -->
     <TextView
-        android:id="@+id/textChat"
+        android:id="@+id/title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome to the Chat Page!"
+        android:text="Chat with other Minds"
         android:textSize="24sp"
         android:textStyle="bold"
-        android:textColor="@android:color/black"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="40dp"/>
+        android:textColor="#216D3B"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp" />
 
-    <!-- Bottom Navigation Bar -->
-    <LinearLayout
-        android:id="@+id/bottomNavBar"
+    <!-- RecyclerView placed below title_text -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/message_list_view"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:background="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/title_text"
+        android:layout_above="@id/message_input_layout"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp" />
+
+    <!-- Message input area at the bottom -->
+    <LinearLayout
+        android:id="@+id/message_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#F2FFCF"
+        android:padding="8dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/message_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#E0E0E0"
+            android:hint="Message..."
+            android:textColor="#000000"
+            android:textSize="16sp" />
 
         <ImageButton
-            android:id="@+id/nav_chat"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:src="@drawable/chat_icon"
-            android:contentDescription="Chat"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:padding="1dp"/> <!-- Adjust padding for spacing -->
-
-        <ImageButton
-            android:id="@+id/nav_find"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:src="@drawable/compass_icon"
-            android:contentDescription="Find Match"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:padding="18dp"/>
-
-        <ImageButton
-            android:id="@+id/nav_profile"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:src="@drawable/profile_icon"
-            android:contentDescription="Profile"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:padding="18dp"/>
+            android:id="@+id/send_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:src="@drawable/apple" />
     </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</RelativeLayout>
