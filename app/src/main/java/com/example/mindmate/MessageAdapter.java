@@ -4,39 +4,31 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int VIEW_TYPE_SENT = 1;
     private static final int VIEW_TYPE_RECEIVED = 2;
-
     private List<Message> messageList;
-    private String currentUsername;
+    private final String currentUserId;
 
-    // Interface for item click callbacks
-    public interface OnItemClickListener {
-        void onItemClick(int position);
-    }
-
-    private OnItemClickListener listener;
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
-    }
-
-    public MessageAdapter(List<Message> messageList, String currentUsername) {
+    public MessageAdapter(List<Message> messageList, String currentUserId) {
         this.messageList = messageList;
-        this.currentUsername = currentUsername;
+        this.currentUserId = currentUserId;
+    }
+
+    public void updateMessages(List<Message> newMessages) {
+        this.messageList = newMessages;
+        notifyDataSetChanged();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return messageList.get(position).sender.equals(currentUsername) ? VIEW_TYPE_SENT : VIEW_TYPE_RECEIVED;
+        return messageList.get(position).getSender().equals(currentUserId)
+                ? VIEW_TYPE_SENT : VIEW_TYPE_RECEIVED;
     }
 
     @NonNull
@@ -45,21 +37,21 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (viewType == VIEW_TYPE_SENT) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_sent, parent, false);
-            return new SentViewHolder(view, listener);
+            return new SentViewHolder(view);
         } else {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_received, parent, false);
-            return new ReceivedViewHolder(view, listener);
+            return new ReceivedViewHolder(view);
         }
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Message msg = messageList.get(position);
+        Message message = messageList.get(position);
         if (holder instanceof SentViewHolder) {
-            ((SentViewHolder) holder).messageText.setText(msg.text);
+            ((SentViewHolder) holder).bind(message);
         } else if (holder instanceof ReceivedViewHolder) {
-            ((ReceivedViewHolder) holder).messageText.setText(msg.text);
+            ((ReceivedViewHolder) holder).bind(message);
         }
     }
 
@@ -71,40 +63,26 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     static class SentViewHolder extends RecyclerView.ViewHolder {
         TextView messageText;
 
-        public SentViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
+        SentViewHolder(View itemView) {
             super(itemView);
             messageText = itemView.findViewById(R.id.message_text);
-            itemView.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION) {
-                            listener.onItemClick(position);
-                        }
-                    }
-                }
-            });
+        }
+
+        void bind(Message message) {
+            messageText.setText(message.getText());
         }
     }
 
     static class ReceivedViewHolder extends RecyclerView.ViewHolder {
         TextView messageText;
 
-        public ReceivedViewHolder(@NonNull View itemView, final OnItemClickListener listener) {
+        ReceivedViewHolder(View itemView) {
             super(itemView);
             messageText = itemView.findViewById(R.id.message_text);
-            itemView.setOnClickListener(new View.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION) {
-                            listener.onItemClick(position);
-                        }
-                    }
-                }
-            });
+        }
+
+        void bind(Message message) {
+            messageText.setText(message.getText());
         }
     }
 }

@@ -1,60 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F2FFCF">
+    android:background="#F5F5F5">
 
-    <!-- Title Text (must be a direct child) -->
-    <TextView
-        android:id="@+id/title_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Chat with other Minds"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="#216D3B"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp" />
-
-    <!-- RecyclerView placed below title_text -->
+    <!-- Message List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/message_list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/title_text"
-        android:layout_above="@id/message_input_layout"
-        android:layout_marginTop="16dp"
-        android:clipToPadding="false"
-        android:paddingBottom="8dp" />
+        android:layout_above="@+id/message_input_layout"
+        android:padding="8dp"/>
 
-    <!-- Message input area at the bottom -->
+    <!-- Message Input -->
     <LinearLayout
         android:id="@+id/message_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#F2FFCF"
-        android:padding="8dp"
-        android:orientation="horizontal">
+        android:background="#FFFFFF"
+        android:orientation="horizontal"
+        android:padding="8dp">
 
         <EditText
             android:id="@+id/message_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:backgroundTint="#E0E0E0"
-            android:hint="Message..."
-            android:textColor="#000000"
-            android:textSize="16sp" />
+            android:hint="Type a message..."
+            android:inputType="textMultiLine"
+            android:maxLines="3"/>
 
         <ImageButton
             android:id="@+id/send_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:src="@drawable/apple" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/apple"
+            android:background="?attr/selectableItemBackgroundBorderless"/>
     </LinearLayout>
-
 </RelativeLayout>

@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_yellow">
@@ -12,30 +13,30 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavBar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <!-- Settings Icon -->
         <ImageView
             android:id="@+id/iconSettings"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:contentDescription="Settings"
             android:src="@drawable/settings_icon"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="Settings" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Logo -->
         <ImageView
             android:id="@+id/logo"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:contentDescription="MindMates Logo"
             android:src="@drawable/logo_1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:contentDescription="MindMates Logo" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Title Question -->
         <TextView
@@ -43,12 +44,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="What is the course you would like to study in this session?"
+            android:textColor="@android:color/black"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black"
-            app:layout_constraintTop_toBottomOf="@id/logo"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/logo" />
 
         <!-- Course Selection Dropdown (Spinner) -->
         <Spinner
@@ -57,46 +58,56 @@
             android:layout_height="50dp"
             android:background="@drawable/spinner_background"
             android:entries="@array/course_options"
-            app:layout_constraintTop_toBottomOf="@id/textQuestion"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/textQuestion" />
 
         <!-- Checkbox: Same Year Student -->
         <CheckBox
             android:id="@+id/checkBoxSameYear"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:text="Same Year Student"
             android:background="@drawable/spinner_background"
             android:padding="12dp"
-            app:layout_constraintTop_toBottomOf="@id/spinnerCourses"
+            android:text="Same Year Student"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/spinnerCourses" />
 
         <!-- Checkbox: Other Filter Option -->
         <CheckBox
             android:id="@+id/checkBoxOtherFilter"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:text="Other Filter Option"
             android:background="@drawable/spinner_background"
-            android:padding="12dp"
             android:checked="true"
-            app:layout_constraintTop_toBottomOf="@id/checkBoxSameYear"
+            android:padding="12dp"
+            android:text="Other Filter Option"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/checkBoxSameYear" />
 
         <!-- Start Matching Button -->
         <Button
             android:id="@+id/buttonMatch"
             android:layout_width="0dp"
             android:layout_height="50dp"
+            android:backgroundTint="@color/tue_red"
             android:text="Start looking for a match"
             android:textColor="@android:color/white"
-            android:backgroundTint="@color/tue_red"
-            app:layout_constraintTop_toBottomOf="@id/checkBoxOtherFilter"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/checkBoxOtherFilter" />
+
+        <ImageButton
+            android:id="@+id/nav_chat_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Chat List"
+            android:src="@drawable/tue_logo_login"
+            app:layout_constraintTop_toBottomOf="@id/buttonMatch"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -135,6 +146,7 @@
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
             android:padding="12dp" />
+
 
         <ImageButton
             android:id="@+id/nav_profile"
