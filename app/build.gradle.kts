@@ -19,7 +19,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-0
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -58,6 +58,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore:24.10.0")
     implementation("com.google.firebase:firebase-storage:20.2.1")
     implementation("com.google.firebase:firebase-database:20.1.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation(libs.firebase.database)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
