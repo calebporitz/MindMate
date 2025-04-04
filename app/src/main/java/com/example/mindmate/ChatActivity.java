@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView; // Add this import
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,7 @@ public class ChatActivity extends AppCompatActivity {
     private String chatId;
     private String currentUserId;
     private String otherUserId;
+    private TextView chatPartnerNameTextView;  // Add this reference for the name
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,26 @@ public class ChatActivity extends AppCompatActivity {
         initializeFirestore();
         setupUI();
         setupMessageListener();
+        fetchOtherUserName();  // Fetch the other user's name
+    }
+
+    // Fetch the full name of the other user from Firestore
+    private void fetchOtherUserName() {
+        db.collection("users").document(otherUserId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String fullName = documentSnapshot.getString("fullName");
+                        if (fullName != null) {
+                            chatPartnerNameTextView.setText(fullName); // Set the name in the TextView
+                        }
+                    } else {
+                        chatPartnerNameTextView.setText("Unknown User"); // Fallback if user doesn't exist
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(ChatActivity.this, "Failed to load user data", Toast.LENGTH_SHORT).show();
+                });
     }
 
     // If chat document does not exist, create one.
@@ -77,6 +100,9 @@ public class ChatActivity extends AppCompatActivity {
         messageInput = findViewById(R.id.message_input);
         sendButton = findViewById(R.id.send_button);
         recyclerView = findViewById(R.id.message_list_view);
+
+        // Set the reference for the TextView that will display the other user's name
+        chatPartnerNameTextView = findViewById(R.id.chat_partner_name);  // Initialize the TextView reference
 
         messageAdapter = new MessageAdapter(new ArrayList<>(), currentUserId);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

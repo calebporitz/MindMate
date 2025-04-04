@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_yellow">
+    android:background="@color/mindmate_light_yellow">
 
     <!-- Settings Icon (Top Left) -->
     <ImageButton
@@ -81,7 +81,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:text="Set profile picture"
-        android:backgroundTint="@color/tue_red"
+        android:backgroundTint="@color/tue_scarlet_red"
         android:textColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/currentlyStudying"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,7 +93,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:text="Set Status"
-        android:backgroundTint="@color/tue_red"
+        android:backgroundTint="@color/tue_scarlet_red"
         android:textColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/btnSetProfilePicture"
         app:layout_constraintStart_toStartOf="parent"
@@ -105,7 +105,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:text="Reset Password"
-        android:backgroundTint="@color/tue_red"
+        android:backgroundTint="@color/tue_scarlet_red"
         android:textColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/btnSetStatus"
         app:layout_constraintStart_toStartOf="parent"
@@ -117,7 +117,7 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:text="Logout"
-        android:backgroundTint="@color/tue_red"
+        android:backgroundTint="@color/tue_scarlet_red"
         android:textColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/btnResetPassword"
         app:layout_constraintStart_toStartOf="parent"
@@ -129,59 +129,11 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:text="Delete account"
-        android:backgroundTint="@color/tue_red"
+        android:backgroundTint="@color/tue_scarlet_red"
         android:textColor="@android:color/white"
         app:layout_constraintTop_toBottomOf="@id/btnLogout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="10dp" />
-
-    <!-- Bottom Navigation Bar -->
-    <LinearLayout
-        android:id="@+id/bottomNavBar"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:background="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <ImageButton
-            android:id="@+id/nav_chat"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:src="@drawable/chat_icon"
-            android:contentDescription="Chat"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:padding="6dp"/> <!-- Adjust padding for spacing -->
-
-        <ImageButton
-            android:id="@+id/nav_find"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:src="@drawable/compass_icon"
-            android:contentDescription="Find Match"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:padding="18dp"/>
-
-        <ImageButton
-            android:id="@+id/nav_profile"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:src="@drawable/profile_icon"
-            android:contentDescription="Profile"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:padding="10dp"/>
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

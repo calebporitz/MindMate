@@ -1,8 +1,10 @@
 package com.example.mindmate;
 
-import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -12,8 +14,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import java.util.ArrayList;
 import java.util.List;
+import android.content.Intent;
 
-public class ChatListActivity extends AppCompatActivity implements ChatAdapter.OnChatClickListener {
+public class ChatOverviewFragment extends Fragment implements ChatAdapter.OnChatClickListener {
 
     private RecyclerView recyclerView;
     private ChatAdapter adapter;
@@ -22,24 +25,27 @@ public class ChatListActivity extends AppCompatActivity implements ChatAdapter.O
     private String currentUserId;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_list);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_chat_overview, container, false);
 
         // Get current user ID from FirebaseAuth
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         // Initialize Firestore
         db = FirebaseFirestore.getInstance();
 
-        setupRecyclerView();
+        setupRecyclerView(view);
         loadChats();
+
+        return view;
     }
 
     // Sets up the RecyclerView with a LinearLayoutManager and attaches the ChatAdapter.
-    private void setupRecyclerView() {
-        recyclerView = findViewById(R.id.chatRecyclerView);
+    private void setupRecyclerView(View view) {
+        recyclerView = view.findViewById(R.id.chatRecyclerView);
         adapter = new ChatAdapter(chatList, this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setAdapter(adapter);
     }
 
@@ -111,7 +117,7 @@ public class ChatListActivity extends AppCompatActivity implements ChatAdapter.O
     public void onChatClick(Chat chat) {
         String otherUserId = chat.getUser1().equals(currentUserId) ? chat.getUser2() : chat.getUser1();
         String chatId = ChatUtils.generateChatId(currentUserId, otherUserId);
-        Intent intent = new Intent(this, ChatActivity.class);
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
         intent.putExtra("CHAT_ID", chatId);
         intent.putExtra("OTHER_USER_ID", otherUserId);
         startActivity(intent);

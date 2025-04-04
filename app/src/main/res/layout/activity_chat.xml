@@ -30,7 +30,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginEnd="12dp"
-            android:src="@drawable/profile_icon"/>
+            android:src="@drawable/placeholder_profile_picture"/>
 
         <!-- Chat Partner Name and Status -->
         <LinearLayout
@@ -53,10 +53,10 @@
             <TextView
                 android:id="@+id/chat_partner_status"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Online"
+                android:layout_height="8dp"
+                android:text="No Status"
                 android:textColor="#216D3B"
-                android:textSize="14sp"/>
+                android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -92,8 +92,9 @@
             android:id="@+id/send_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/apple"
-            android:background="?attr/selectableItemBackgroundBorderless"/>
+            android:src="@drawable/send"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerInside"/>
     </LinearLayout>
 
 </RelativeLayout>

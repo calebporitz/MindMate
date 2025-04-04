@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- MindMate Colors -->
+    <color name="mindmate_dark_green">#154422</color> <!-- Secondary Logo Color -->
+    <color name="mindmate_green">#266B3C</color> <!-- Main Logo Color -->
+    <color name="mindmate_light_yellow">#F1FFCE</color> <!-- Background Color -->
+    <color name="coral_red">#FF6F61</color> <!-- Coral Red for Background Color equivalent -->
+    <color name="dark_scarlet">#9B1B30</color> <!-- Dark Scarlet (for Secondary Logo Color equivalent) -->
+    <color name="tue_scarlet_red">#C81919</color> <!-- Scarlet Red (TU/e) -->
+
+    <!-- Other colors -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -7,8 +16,4 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="light_yellow">#f1ffce</color>
-    <color name="tue_red">#c81818</color>
-    <color name="light_green">#f1ffce</color>
-    <color name="dark_green">#154422</color>
 </resources>

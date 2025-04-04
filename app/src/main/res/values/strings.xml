@@ -7,4 +7,11 @@
         <item>Chemistry</item>
         <item>Biology</item>
     </string-array>
+
+    <!-- Theme Options for the Spinner -->
+    <string-array name="theme_options">
+        <item>Light Theme</item>
+        <item>Dark Theme</item>
+        <item>System Default (Auto)</item>
+    </string-array>
 </resources>

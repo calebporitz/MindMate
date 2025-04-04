@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/mindmates_logo_no_text_masked"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MindMate"
+        android:theme="@style/Theme.MindMates"
         tools:targetApi="31">
 
         <activity
@@ -29,13 +29,10 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".HomeActivity" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".SearchingActivity" />
-        <activity
-            android:name=".ProfileActivity"
-            android:exported="false" />
+        <activity android:name=".NavigationActivity" />
         <activity android:name=".ChatActivity" />
         <activity android:name=".SettingsActivity" />
-        <activity android:name=".ChatListActivity" />
+
     </application>
 
 </manifest>

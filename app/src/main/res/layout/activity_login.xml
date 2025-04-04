@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="MindMates"
-            android:textColor="@color/tue_red"
+            android:textColor="@color/tue_scarlet_red"
             android:textSize="28sp"
             android:fontFamily="sans-serif-medium"
             android:layout_marginTop="12dp"/>
@@ -70,7 +70,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Register with a valid student email"
-            android:textColor="@color/tue_red"
+            android:textColor="@color/tue_scarlet_red"
             android:textStyle="bold"
             android:clickable="true"
             android:focusable="true"/>

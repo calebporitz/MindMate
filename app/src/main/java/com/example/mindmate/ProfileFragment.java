@@ -1,12 +1,14 @@
 package com.example.mindmate;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
-import android.view.View;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -15,10 +17,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.fragment.app.Fragment;
+import android.view.View;
 
 import com.bumptech.glide.Glide;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
@@ -29,7 +31,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileFragment extends Fragment {
 
     private TextView textUserName, textUserEmail, textCurrentlyStudying;
     private FirebaseAuth mAuth;
@@ -39,11 +41,9 @@ public class ProfileActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     private ImageView profileImage;
     private Uri selectedImageUri;
-
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -51,16 +51,16 @@ public class ProfileActivity extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
 
         // Find views
-        textUserName = findViewById(R.id.fullName);
-        textUserEmail = findViewById(R.id.userEmail);
-        textCurrentlyStudying = findViewById(R.id.currentlyStudying);
-        profileImage = findViewById(R.id.profileImage);
+        textUserName = view.findViewById(R.id.fullName);
+        textUserEmail = view.findViewById(R.id.userEmail);
+        textCurrentlyStudying = view.findViewById(R.id.currentlyStudying);
+        profileImage = view.findViewById(R.id.profileImage);
 
-        Button btnSetStatus = findViewById(R.id.btnSetStatus);
-        Button btnDeleteAccount = findViewById(R.id.btnDeleteAccount);
-        Button btnLogout = findViewById(R.id.btnLogout);
-        Button btnResetPassword = findViewById(R.id.btnResetPassword);
-        Button btnSetProfilePicture = findViewById(R.id.btnSetProfilePicture);
+        Button btnSetStatus = view.findViewById(R.id.btnSetStatus);
+        Button btnDeleteAccount = view.findViewById(R.id.btnDeleteAccount);
+        Button btnLogout = view.findViewById(R.id.btnLogout);
+        Button btnResetPassword = view.findViewById(R.id.btnResetPassword);
+        Button btnSetProfilePicture = view.findViewById(R.id.btnSetProfilePicture);
 
         // Load user info
         loadUserInfo();
@@ -73,32 +73,20 @@ public class ProfileActivity extends AppCompatActivity {
         btnSetProfilePicture.setOnClickListener(v -> openImageChooser());
 
         // Settings button
-        ImageButton btnSettings = findViewById(R.id.btnSettings);
+        ImageButton btnSettings = view.findViewById(R.id.btnSettings);
         btnSettings.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
+            Intent intent = new Intent(getContext(), SettingsActivity.class);
             startActivity(intent);
         });
 
-        // Bottom nav
-        ImageButton navSearching = findViewById(R.id.nav_find);
-        navSearching.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, SearchingActivity.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        });
-
-        ImageButton navChat = findViewById(R.id.nav_chat);
-        navChat.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
-            startActivity(intent);
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        });
+        return view;
     }
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
             selectedImageUri = data.getData();
             profileImage.setImageURI(selectedImageUri); // Shows the selected image
 
@@ -135,7 +123,8 @@ public class ProfileActivity extends AppCompatActivity {
                             }
                         } else {
                             textUserName.setText("Unknown User");
-                            Toast.makeText(ProfileActivity.this, "Failed to load user info", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Failed to load user info", Toast.LENGTH_SHORT).show();
+
                         }
                     });
         } else {
@@ -168,17 +157,17 @@ public class ProfileActivity extends AppCompatActivity {
                             .addOnFailureListener(e -> Log.e("ProfileActivity", "Failed to save picture URL", e));
                 }))
                 .addOnFailureListener(e -> {
-                    Toast.makeText(ProfileActivity.this, "Failed to upload image", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Failed to upload image", Toast.LENGTH_SHORT).show();
                     Log.e("ProfileActivity", "Storage upload failed", e);
                 });
     }
 
 
     private void showStatusDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Update Study Status");
 
-        final EditText input = new EditText(this);
+        final EditText input = new EditText(getActivity());
         input.setHint("Enter your status");
         builder.setView(input);
 
@@ -187,7 +176,8 @@ public class ProfileActivity extends AppCompatActivity {
             if (!newStatus.isEmpty()) {
                 updateStudyStatus(newStatus);
             } else {
-                Toast.makeText(ProfileActivity.this, "Status cannot be empty", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Status cannot be empty", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -197,7 +187,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void updateStudyStatus(String status) {
         if (currentUser == null) {
-            Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No user logged in", Toast.LENGTH_SHORT).show();
+
             return;
         }
 
@@ -211,35 +202,35 @@ public class ProfileActivity extends AppCompatActivity {
                                     .update("studyStatus", status)
                                     .addOnSuccessListener(aVoid -> {
                                         textCurrentlyStudying.setText("📖 " + status);
-                                        Toast.makeText(ProfileActivity.this, "Status updated!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "Status updated!", Toast.LENGTH_SHORT).show();
                                     })
-                                    .addOnFailureListener(e -> Toast.makeText(ProfileActivity.this, "Failed to update status", Toast.LENGTH_SHORT).show());
+                                    .addOnFailureListener(e -> Toast.makeText(getContext(), "Failed to update status", Toast.LENGTH_SHORT).show());
                         }
                     } else {
-                        Toast.makeText(ProfileActivity.this, "User not found in Firestore", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "User not found in Firestore", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
     private void showResetPasswordDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Reset Password");
         builder.setMessage("Enter your current password and new password.");
 
-        LinearLayout layout = new LinearLayout(this);
+        LinearLayout layout = new LinearLayout(getActivity());
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        final EditText inputCurrentPassword = new EditText(this);
+        final EditText inputCurrentPassword = new EditText(getActivity());
         inputCurrentPassword.setHint("Current Password");
         inputCurrentPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         layout.addView(inputCurrentPassword);
 
-        final EditText inputNewPassword = new EditText(this);
+        final EditText inputNewPassword = new EditText(getActivity());
         inputNewPassword.setHint("New Password");
         inputNewPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         layout.addView(inputNewPassword);
 
-        final EditText inputRepeatPassword = new EditText(this);
+        final EditText inputRepeatPassword = new EditText(getActivity());
         inputRepeatPassword.setHint("Repeat New Password");
         inputRepeatPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         layout.addView(inputRepeatPassword);
@@ -252,15 +243,19 @@ public class ProfileActivity extends AppCompatActivity {
             String repeatPassword = inputRepeatPassword.getText().toString().trim();
 
             if (currentPassword.isEmpty() || newPassword.isEmpty() || repeatPassword.isEmpty()) {
-                Toast.makeText(ProfileActivity.this, "All fields are required.", Toast.LENGTH_LONG).show();
+                // Use getActivity() or getContext() instead of ProfileFragment.getActivity()
+                Toast.makeText(getActivity(), "All fields are required.", Toast.LENGTH_LONG).show();
             } else if (!newPassword.equals(repeatPassword)) {
-                Toast.makeText(ProfileActivity.this, "New passwords do not match.", Toast.LENGTH_LONG).show();
+                // Use getActivity() or getContext() instead of ProfileFragment.getActivity()
+                Toast.makeText(getActivity(), "New passwords do not match.", Toast.LENGTH_LONG).show();
             } else if (newPassword.length() < 6) {
-                Toast.makeText(ProfileActivity.this, "Password must be at least 6 characters.", Toast.LENGTH_LONG).show();
+                // Use getActivity() or getContext() instead of ProfileFragment.this
+                Toast.makeText(getActivity(), "Password must be at least 6 characters.", Toast.LENGTH_LONG).show();
             } else {
                 resetUserPassword(currentPassword, newPassword);
             }
         });
+
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
         builder.show();
@@ -268,9 +263,11 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void resetUserPassword(String currentPassword, String newPassword) {
         if (currentUser == null) {
-            Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
+            // Use getActivity() or getContext() instead of 'this'
+            Toast.makeText(getActivity(), "No user logged in", Toast.LENGTH_SHORT).show();
             return;
         }
+
 
         String userEmail = currentUser.getEmail();
         AuthCredential credential = EmailAuthProvider.getCredential(userEmail, currentPassword);
@@ -279,19 +276,20 @@ public class ProfileActivity extends AppCompatActivity {
             if (task.isSuccessful()) {
                 currentUser.updatePassword(newPassword).addOnCompleteListener(updateTask -> {
                     if (updateTask.isSuccessful()) {
-                        Toast.makeText(ProfileActivity.this, "Password updated successfully!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Password updated successfully!", Toast.LENGTH_LONG).show();
                     } else {
-                        Toast.makeText(ProfileActivity.this, "Failed to update password.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Failed to update password.", Toast.LENGTH_LONG).show();
                     }
                 });
             } else {
-                Toast.makeText(ProfileActivity.this, "Authentication failed. Check your current password.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Authentication failed. Check your current password.", Toast.LENGTH_LONG).show();
             }
         });
+
     }
 
     private void showLogoutDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Log Out");
         builder.setMessage("Are you sure you want to log out?");
         builder.setPositiveButton("Log Out", (dialog, which) -> logoutUser());
@@ -301,27 +299,28 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void logoutUser() {
         mAuth.signOut();
-        Toast.makeText(ProfileActivity.this, "Logged out successfully", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+        Toast.makeText(getActivity(), "Logged out successfully", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
-        finish();
+        getActivity().finish(); // finish the current activity
     }
 
+
     private void showDeleteAccountDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Delete Account");
         builder.setMessage("This action is permanent. Enter your password and check the box to confirm.");
 
-        LinearLayout layout = new LinearLayout(this);
+        LinearLayout layout = new LinearLayout(getActivity());
         layout.setOrientation(LinearLayout.VERTICAL);
 
-        final EditText inputPassword = new EditText(this);
+        final EditText inputPassword = new EditText(getActivity());
         inputPassword.setHint("Enter your password");
         inputPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         layout.addView(inputPassword);
 
-        final CheckBox confirmCheckBox = new CheckBox(this);
+        final CheckBox confirmCheckBox = new CheckBox(getActivity());
         confirmCheckBox.setText("I understand that this action is permanent.");
         layout.addView(confirmCheckBox);
 
@@ -334,7 +333,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (!password.isEmpty() && isChecked) {
                 deleteUserAccount(password);
             } else {
-                Toast.makeText(ProfileActivity.this, "Please enter your password and check the confirmation box.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Please enter your password and check the confirmation box.", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -344,7 +343,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void deleteUserAccount(String password) {
         if (currentUser == null) {
-            Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "No user logged in", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -367,19 +366,20 @@ public class ProfileActivity extends AppCompatActivity {
                 // Delete user from Firebase Auth
                 currentUser.delete().addOnCompleteListener(deleteTask -> {
                     if (deleteTask.isSuccessful()) {
-                        Toast.makeText(ProfileActivity.this, "Account deleted successfully", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Account deleted successfully", Toast.LENGTH_LONG).show();
                         mAuth.signOut();
-                        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                        Intent intent = new Intent(getActivity(), LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
-                        finish();
+                        getActivity().finish();
                     } else {
-                        Toast.makeText(ProfileActivity.this, "Failed to delete account", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Failed to delete account", Toast.LENGTH_LONG).show();
                     }
                 });
             } else {
-                Toast.makeText(ProfileActivity.this, "Authentication failed. Check your password.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Authentication failed. Check your password.", Toast.LENGTH_LONG).show();
             }
         });
+
     }
 }
