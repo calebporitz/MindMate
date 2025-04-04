@@ -1,5 +1,6 @@
 package com.example.mindmate;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.EditText;
@@ -82,6 +83,10 @@ public class ChatActivity extends AppCompatActivity {
         recyclerView.setAdapter(messageAdapter);
 
         sendButton.setOnClickListener(v -> sendMessage());
+
+        // Set up the back button to go back to the chat overview
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(v -> finish());  // Close the current activity and return to the previous one
     }
 
     // Send a message with the current timestamp.

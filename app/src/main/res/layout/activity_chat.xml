@@ -1,14 +1,71 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
+    <!-- Chat Partner Info + Back Button -->
+    <LinearLayout
+        android:id="@+id/top_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#F2FFCF"
+        android:padding="8dp"
+        android:layout_alignParentTop="true">
+
+        <!-- Back Button -->
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:scaleType="centerInside"/>
+
+        <!-- Profile Icon -->
+        <ImageView
+            android:id="@+id/chat_partner_profile_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/profile_icon"/>
+
+        <!-- Chat Partner Name and Status -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Chat Partner Name -->
+            <TextView
+                android:id="@+id/chat_partner_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User Name"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <!-- Chat Partner Status -->
+            <TextView
+                android:id="@+id/chat_partner_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Online"
+                android:textColor="#216D3B"
+                android:textSize="14sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
     <!-- Message List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/message_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/top_bar_layout"
         android:layout_above="@+id/message_input_layout"
         android:padding="8dp"/>
 
@@ -38,4 +95,5 @@
             android:src="@drawable/apple"
             android:background="?attr/selectableItemBackgroundBorderless"/>
     </LinearLayout>
+
 </RelativeLayout>
