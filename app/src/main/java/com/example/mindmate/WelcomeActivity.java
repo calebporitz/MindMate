@@ -15,6 +15,6 @@ public class WelcomeActivity extends AppCompatActivity {
             Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
             startActivity(intent);
             finish(); // Closes WelcomeActivity so user can't go back to it
-        }, 2000); // 2000 milliseconds = 2 seconds
+        }, 500); // 500 milliseconds = 0.5 seconds
     }
 }
