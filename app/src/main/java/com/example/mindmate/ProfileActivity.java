@@ -61,6 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
         Button btnLogout = findViewById(R.id.btnLogout);
         Button btnResetPassword = findViewById(R.id.btnResetPassword);
         Button btnSetProfilePicture = findViewById(R.id.btnSetProfilePicture);
+        Button btnChangeName = findViewById(R.id.btnChangeName);
 
         // Load user info
         loadUserInfo();
@@ -71,6 +72,7 @@ public class ProfileActivity extends AppCompatActivity {
         btnLogout.setOnClickListener(v -> showLogoutDialog());
         btnResetPassword.setOnClickListener(v -> showResetPasswordDialog());
         btnSetProfilePicture.setOnClickListener(v -> openImageChooser());
+        btnChangeName.setOnClickListener(v -> showNameDialog());
 
         // Settings button
         ImageButton btnSettings = findViewById(R.id.btnSettings);
@@ -288,6 +290,51 @@ public class ProfileActivity extends AppCompatActivity {
                 Toast.makeText(ProfileActivity.this, "Authentication failed. Check your current password.", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void showNameDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Update Account Name");
+
+        final EditText input = new EditText(this);
+        input.setHint("Enter the new name");
+        builder.setView(input);
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String newName = input.getText().toString().trim();
+            if (!newName.isEmpty()) {
+                updateName(newName);
+            } else {
+                Toast.makeText(ProfileActivity.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+    }
+
+    private void updateName(String name) {
+        if (currentUser == null) {
+            Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
+        }
+
+        String userEmail = currentUser.getEmail();
+
+        db.collection("users").whereEqualTo("email", userEmail).get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            db.collection("users").document(document.getId())
+                                    .update("fullName", name)
+                                    .addOnSuccessListener(aVoid -> {
+                                        textUserName.setText(name);
+                                        Toast.makeText(ProfileActivity.this, "Name updated!", Toast.LENGTH_SHORT).show();
+                                    })
+                                    .addOnFailureListener(e -> Toast.makeText(ProfileActivity.this, "Failed to update name", Toast.LENGTH_SHORT).show());
+                        }
+                    } else {
+                        Toast.makeText(ProfileActivity.this, "User not found in Firestore", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void showLogoutDialog() {
