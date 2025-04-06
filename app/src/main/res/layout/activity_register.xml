@@ -13,17 +13,6 @@
         android:padding="12dp">
 
         <ImageButton
-            android:id="@+id/imageButton2"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:backgroundTint="#00FFFFFF"
-            android:scaleX="0.45"
-            android:scaleY="0.45"
-            android:translationX="-140dp"
-            android:layout_marginTop="8dp"
-            app:srcCompat="@drawable/settings_icon" />
-
-        <ImageButton
             android:id="@+id/imageButton"
             android:layout_width="200dp"
             android:layout_height="144dp"
