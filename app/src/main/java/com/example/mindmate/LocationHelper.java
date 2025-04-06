@@ -21,30 +21,33 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class LocationHelper {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 10001;
     private final Activity activity;
     private final FusedLocationProviderClient fusedLocationClient;
 
+    public interface LocationCallback {
+        void onLocationRetrieved(Location location);
+    }
+
     public LocationHelper(Activity activity) {
         this.activity = activity;
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
     }
 
-    public void requestLocation() {
+    public void requestLocation(LocationCallback callback) {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
         } else {
-            getLastLocation();
+            getLastLocation(callback);
         }
     }
 
-    private void getLastLocation() {
+    private void getLastLocation(LocationCallback callback) {
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -54,38 +57,12 @@ public class LocationHelper {
                 .addOnSuccessListener(activity, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        //error handling in case location is being called on user who is not signed in
-                        if (user == null) {
-                            Log.e("LocationHelper", "No user signed in");
-                            return;
-                        }
-
                         if (location != null) {
-                            double lat = location.getLatitude();
-                            double lon = location.getLongitude();
-
-                            Map<String, Object> locationData = new HashMap<>();
-                            locationData.put("lat", lat);
-                            locationData.put("lon", lon);
-                            locationData.put("timestamp", FieldValue.serverTimestamp());
-
-                            FirebaseFirestore.getInstance()
-                                    .collection("users")
-                                    .document(user.getUid())
-                                    .update("location", locationData)
-                                    .addOnSuccessListener(aVoid -> Log.d("LocationHelper", "Location updated"))
-                                    .addOnFailureListener(e -> Log.e("LocationHelper", "Failed to update location", e));
-
-
-                            Toast.makeText(activity, "Lat: " + lat + ", Lon: " + lon, Toast.LENGTH_LONG).show();
+                            callback.onLocationRetrieved(location);
                         } else {
-                            Toast.makeText(activity, "Location is null", Toast.LENGTH_SHORT).show();
+                            callback.onLocationRetrieved(null);  // Call the callback with null to handle it in the activity
                         }
                     }
                 });
     }
 }
-//To call the function of this class use this code to create an instance:
-// LocationHelper locationHelper = new LocationHelper(this);
-//locationHelper.requestLocation();
