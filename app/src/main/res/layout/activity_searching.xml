@@ -19,14 +19,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <!-- Settings Icon -->
-        <ImageView
-            android:id="@+id/iconSettings"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:contentDescription="Settings"
-            android:src="@drawable/settings_icon"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Logo -->
         <ImageView
@@ -98,16 +90,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/checkBoxOtherFilter" />
-
-        <ImageButton
-            android:id="@+id/nav_chat_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="Chat List"
-            android:src="@drawable/tue_logo_login"
-            app:layout_constraintTop_toBottomOf="@id/buttonMatch"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

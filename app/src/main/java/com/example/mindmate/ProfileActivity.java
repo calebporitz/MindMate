@@ -87,11 +87,11 @@ public class ProfileActivity extends AppCompatActivity {
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
 
-        ImageButton navChat = findViewById(R.id.nav_chat);
-        navChat.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
+        // NEW: Chat List Button: navigates to ChatListActivity (chat overview screen).
+        ImageButton navChatList = findViewById(R.id.nav_chat); // Ensure this button exists in your layout.
+        navChatList.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ChatListActivity.class);
             startActivity(intent);
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         });
     }
     @Override
