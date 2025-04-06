@@ -24,7 +24,7 @@
         android:id="@+id/tutorialText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="In this tutorial, you'll learn how to use the MindMate app.\n\nStep 1: Register with your TU/e email.\nStep 2: Complete your profile.\nStep 3: Start matching with study partners!\n\nTap 'Close Tutorial' to get started."
+        android:text="In this tutorial, you'll learn how to use the MindMate app.\n\nStep 1: You have just registered with your TU/e email and will receive a verification email. wait for it and click on the verification link and click on the link\nStep 2: Now you can Log in with your email and password\nStep 3: Now you can start matching with other students using the middle page!\nOther Steps: Chatting on the left, Profile (settings) on the right\n\nTap 'Close Tutorial' to get started."
         android:textSize="16sp"
         android:textColor="@android:color/black"
         app:layout_constraintTop_toBottomOf="@id/textChat"
