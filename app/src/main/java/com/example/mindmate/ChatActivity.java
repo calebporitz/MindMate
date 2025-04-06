@@ -1,10 +1,10 @@
 package com.example.mindmate;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,6 +27,9 @@ public class ChatActivity extends AppCompatActivity {
     private MessageAdapter messageAdapter;
     private FirebaseFirestore db;
 
+    // New TextView to display the chat partner's name
+    private TextView chatPartnerNameTextView;
+
     private String chatId;
     private String currentUserId;
     private String otherUserId;
@@ -36,7 +39,7 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // Get IDs from intent
+        // Retrieve chatId and otherUserId from Intent extras.
         chatId = getIntent().getStringExtra("CHAT_ID");
         otherUserId = getIntent().getStringExtra("OTHER_USER_ID");
 
@@ -53,15 +56,50 @@ public class ChatActivity extends AppCompatActivity {
             return;
         }
         currentUserId = user.getUid();
-
         db = FirebaseFirestore.getInstance();
 
-        initializeFirestore();
+        // Setup UI elements
         setupUI();
+        // Fetch and display the chat partner's name.
+        fetchAndDisplayChatPartnerName();
+
+        initializeFirestore();
         setupMessageListener();
     }
 
-    // If chat document does not exist, create one.
+    // Sets up UI elements and RecyclerView.
+    private void setupUI() {
+        // Assume your activity_chat.xml now contains a TextView with id "chat_partner_name"
+        chatPartnerNameTextView = findViewById(R.id.chat_partner_name);
+        messageInput = findViewById(R.id.message_input);
+        sendButton = findViewById(R.id.send_button);
+        recyclerView = findViewById(R.id.message_list_view);
+
+        messageAdapter = new MessageAdapter(new ArrayList<>(), currentUserId);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(messageAdapter);
+
+        sendButton.setOnClickListener(v -> sendMessage());
+    }
+
+    // Fetch the chat partner's full name from Firestore and display it.
+    private void fetchAndDisplayChatPartnerName() {
+        db.collection("users").document(otherUserId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String fullName = documentSnapshot.getString("fullName");
+                        chatPartnerNameTextView.setText(fullName);
+                    } else {
+                        chatPartnerNameTextView.setText("Unknown User");
+                    }
+                })
+                .addOnFailureListener(e ->
+                        chatPartnerNameTextView.setText("Error Loading Name")
+                );
+    }
+
+    // If the chat document does not exist, create one.
     private void initializeFirestore() {
         DocumentReference chatRef = db.collection("chats").document(chatId);
         chatRef.get().addOnSuccessListener(documentSnapshot -> {
@@ -73,23 +111,7 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private void setupUI() {
-        messageInput = findViewById(R.id.message_input);
-        sendButton = findViewById(R.id.send_button);
-        recyclerView = findViewById(R.id.message_list_view);
-
-        messageAdapter = new MessageAdapter(new ArrayList<>(), currentUserId);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(messageAdapter);
-
-        sendButton.setOnClickListener(v -> sendMessage());
-
-        // Set up the back button to go back to the chat overview
-        ImageButton backButton = findViewById(R.id.back_button);
-        backButton.setOnClickListener(v -> finish());  // Close the current activity and return to the previous one
-    }
-
-    // Send a message with the current timestamp.
+    // Sends a message with the current timestamp.
     private void sendMessage() {
         String messageText = messageInput.getText().toString().trim();
         if (TextUtils.isEmpty(messageText)) return;
@@ -106,14 +128,14 @@ public class ChatActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> Toast.makeText(ChatActivity.this, "Send failed", Toast.LENGTH_SHORT).show());
     }
 
-    // Update the chat document with the last sent message.
+    // Updates the chat document's lastMessage field.
     private void updateLastMessage(String messageText) {
         db.collection("chats").document(chatId)
                 .update("lastMessage", messageText)
                 .addOnFailureListener(e -> Toast.makeText(ChatActivity.this, "Update failed", Toast.LENGTH_SHORT).show());
     }
 
-    // Listen for messages ordered by timestamp.
+    // Sets up a real-time listener on the messages subcollection, ordered by timestamp.
     private void setupMessageListener() {
         db.collection("chats").document(chatId)
                 .collection("messages")

@@ -1,27 +1,38 @@
 package com.example.mindmate;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MatchFoundActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_matchfound);
+        setContentView(R.layout.activity_matchfound);  // Layout that shows a "Match Found!" message
 
-        ImageView imageView = findViewById(R.id.imageView);
-        imageView.setImageResource(R.drawable.matchfound); // Make sure this image is in your drawable folder
-
-        double latitude = getIntent().getDoubleExtra("latitude", 0);
-        double longitude = getIntent().getDoubleExtra("longitude", 0);
-
-        new Handler().postDelayed(() -> {
-            Toast.makeText(this, "Location: Lat: " + latitude + ", Lon: " + longitude, Toast.LENGTH_LONG).show();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Not logged in", Toast.LENGTH_SHORT).show();
             finish();
-        }, 5000);
+            return;
+        }
+        String currentUserId = user.getUid();
+        // For testing, use a hardcoded matched user's UID.
+        String matchedUserId = "pZmRfh37jKa9C83xinTzOl1QaDr1";
+        String chatId = ChatUtils.generateChatId(currentUserId, matchedUserId);
+
+        // Wait for 2 seconds, then launch ChatActivity.
+        new Handler().postDelayed(() -> {
+            Intent intent = new Intent(MatchFoundActivity.this, ChatActivity.class);
+            intent.putExtra("CHAT_ID", chatId);
+            intent.putExtra("OTHER_USER_ID", matchedUserId);
+            startActivity(intent);
+            finish();  // Close MatchFoundActivity so user cannot go back.
+        }, 2000);  // 2000 milliseconds = 2 seconds
     }
 }

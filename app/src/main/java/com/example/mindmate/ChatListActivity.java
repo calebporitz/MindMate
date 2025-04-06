@@ -26,16 +26,14 @@ public class ChatListActivity extends AppCompatActivity implements ChatAdapter.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_list);
 
-        // Get current user ID from FirebaseAuth
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        // Initialize Firestore
         db = FirebaseFirestore.getInstance();
 
         setupRecyclerView();
         loadChats();
     }
 
-    // Sets up the RecyclerView with a LinearLayoutManager and attaches the ChatAdapter.
+    // Sets up the RecyclerView and attaches the ChatAdapter.
     private void setupRecyclerView() {
         recyclerView = findViewById(R.id.chatRecyclerView);
         adapter = new ChatAdapter(chatList, this);
@@ -54,29 +52,23 @@ public class ChatListActivity extends AppCompatActivity implements ChatAdapter.O
                 .addSnapshotListener((snapshot, e) -> processChats(snapshot, e));
     }
 
-    // Process the snapshot from Firestore, updating the chatList.
+    // Processes the snapshot from Firestore, updates the chatList, and fetches the other user's name.
     private void processChats(QuerySnapshot snapshot, FirebaseFirestoreException e) {
         if (e != null) return;
         if (snapshot == null) return;
         for (DocumentChange dc : snapshot.getDocumentChanges()) {
-            // Convert Firestore document into a Chat object.
             Chat chat = dc.getDocument().toObject(Chat.class);
-            // Determine the other user's ID based on currentUserId.
             String otherUserId = chat.getUser1().equals(currentUserId)
-                    ? chat.getUser2()
-                    : chat.getUser1();
-            // Fetch the other user's full name from the "users" collection.
+                    ? chat.getUser2() : chat.getUser1();
             db.collection("users").document(otherUserId)
                     .get()
                     .addOnSuccessListener(userDoc -> {
                         if (userDoc.exists()) {
-                            // Assuming the user document has a "fullName" field.
                             String fullName = userDoc.getString("fullName");
                             chat.setOtherUserName(fullName);
                         } else {
                             chat.setOtherUserName("Unknown");
                         }
-                        // Handle DocumentChange types (ADDED, MODIFIED).
                         switch (dc.getType()) {
                             case ADDED:
                                 chatList.add(chat);
@@ -87,13 +79,12 @@ public class ChatListActivity extends AppCompatActivity implements ChatAdapter.O
                             default:
                                 break;
                         }
-                        // Notify adapter to refresh the list.
                         adapter.notifyDataSetChanged();
                     });
         }
     }
 
-    // Updates an existing chat in the list.
+    // Updates an existing chat in the chatList.
     private void updateExistingChat(Chat updatedChat) {
         for (int i = 0; i < chatList.size(); i++) {
             Chat chat = chatList.get(i);
@@ -105,8 +96,7 @@ public class ChatListActivity extends AppCompatActivity implements ChatAdapter.O
         }
     }
 
-    // When a chat item is clicked, determine the other user's ID, generate the chat ID,
-    // and open ChatActivity with the appropriate extras.
+    // When a chat item is clicked, open ChatActivity with the correct extras.
     @Override
     public void onChatClick(Chat chat) {
         String otherUserId = chat.getUser1().equals(currentUserId) ? chat.getUser2() : chat.getUser1();

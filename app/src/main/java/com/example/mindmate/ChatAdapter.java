@@ -10,7 +10,6 @@ import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
-    // Interface to handle clicks on a chat item.
     public interface OnChatClickListener {
         void onChatClick(Chat chat);
     }
@@ -23,7 +22,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         this.listener = listener;
     }
 
-    // Inflates the layout for a single chat item.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -32,14 +30,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         return new ViewHolder(view);
     }
 
-    // Binds a Chat object's data to the views.
+    // Binds a Chat object's data (other user's name and last message) to the item views.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Chat chat = chatList.get(position);
-        // Set the other user's full name and the last message.
         holder.otherUserName.setText(chat.getOtherUserName());
         holder.lastMessage.setText(chat.getLastMessage());
-        // Handle item click.
         holder.itemView.setOnClickListener(v -> listener.onChatClick(chat));
     }
 
@@ -48,14 +44,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
         return chatList.size();
     }
 
-    // ViewHolder class holds references to the views for each chat item.
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView otherUserName;
         TextView lastMessage;
 
         ViewHolder(View itemView) {
             super(itemView);
-            // Assume your item_chat.xml layout has two TextViews with these IDs.
+            // Ensure your item_chat.xml layout has these TextViews.
             otherUserName = itemView.findViewById(R.id.otherUserName);
             lastMessage = itemView.findViewById(R.id.lastMessage);
         }
