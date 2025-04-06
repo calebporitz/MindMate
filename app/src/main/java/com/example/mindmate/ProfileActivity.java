@@ -310,6 +310,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        builder.show();
     }
 
     private void updateName(String name) {
