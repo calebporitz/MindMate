@@ -7,6 +7,22 @@
     android:layout_height="match_parent"
     android:background="@color/light_yellow">
 
+    <!-- Settings Icon (Top Left) -->
+    <ImageButton
+        android:id="@+id/btnSettings"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/settings"
+        android:contentDescription="Settings"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:padding="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp" />
+
     <!-- Container for all content except bottom navigation -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/contentContainer"
@@ -21,16 +37,20 @@
         <!-- Settings Icon -->
 
         <!-- Logo -->
-        <ImageView
-            android:id="@+id/logo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:contentDescription="MindMates Logo"
-            android:src="@drawable/logo_1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Title Question -->
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="218dp"
+            android:layout_height="212dp"
+            android:contentDescription="MindMates Logo"
+            android:src="@drawable/mindmates_logo_with_text_512x"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/textQuestion"
             android:layout_width="wrap_content"
@@ -93,7 +113,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Bottom Navigation Bar (No Padding) -->
+    <!-- Bottom Navigation Bar -->
     <LinearLayout
         android:id="@+id/bottomNavBar"
         android:layout_width="match_parent"
@@ -104,43 +124,44 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Navigation Buttons -->
+        <!-- Chat Button -->
         <ImageButton
             android:id="@+id/nav_chat"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:src="@drawable/chat_icon"
+            android:src="@drawable/forum_chatoverview"
             android:contentDescription="Chat"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:padding="6dp" />
+            android:padding="12dp"/>
 
+        <!-- Find Match Button -->
         <ImageButton
             android:id="@+id/nav_find"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:src="@drawable/compass_icon"
+            android:src="@drawable/compas_matching"
             android:contentDescription="Find Match"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:padding="12dp" />
+            android:padding="5dp"/>
 
-
+        <!-- Profile Button -->
         <ImageButton
             android:id="@+id/nav_profile"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:src="@drawable/profile_icon"
+            android:src="@drawable/person_profile"
             android:contentDescription="Profile"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
-            android:padding="18dp" />
+            android:padding="12dp"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

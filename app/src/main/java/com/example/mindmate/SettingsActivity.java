@@ -2,6 +2,7 @@ package com.example.mindmate;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -15,6 +16,10 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        // Back button setup
+        ImageButton backButton = findViewById(R.id.back_button2back);
+        backButton.setOnClickListener(v -> finish());
 
         // Initialize the switch
         darkModeSwitch = findViewById(R.id.switchDarkMode);

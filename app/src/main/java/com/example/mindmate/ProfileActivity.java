@@ -77,23 +77,25 @@ public class ProfileActivity extends AppCompatActivity {
         // Settings button
         ImageButton btnSettings = findViewById(R.id.btnSettings);
         btnSettings.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, SettingsActivity.class);
+            Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         });
 
-        // Bottom nav
+        // BOTTOM NAVIGATION
+        // Chat List Button: navigates to ChatListActivity (chat overview).
+        ImageButton navChatList = findViewById(R.id.nav_chat);
+        navChatList.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ChatListActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
+
+        // Searching Button: navigates to SearchingActivity.
         ImageButton navSearching = findViewById(R.id.nav_find);
         navSearching.setOnClickListener(v -> {
             Intent intent = new Intent(ProfileActivity.this, SearchingActivity.class);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        });
-
-        // NEW: Chat List Button: navigates to ChatListActivity (chat overview screen).
-        ImageButton navChatList = findViewById(R.id.nav_chat); // Ensure this button exists in your layout.
-        navChatList.setOnClickListener(v -> {
-            Intent intent = new Intent(this, ChatListActivity.class);
-            startActivity(intent);
         });
     }
     @Override

@@ -6,11 +6,20 @@
     android:layout_height="match_parent"
     android:background="@color/light_yellow">
 
+    <ImageButton
+        android:id="@+id/back_button2back"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Back"
+        android:scaleType="centerInside"
+        android:src="@drawable/arrow_back" />
+
     <TextView
         android:id="@+id/textChat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome to the Settings Page!"
+        android:text="Settings &amp; Support"
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@android:color/black"
@@ -19,19 +28,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="40dp"/>
 
-    <TextView
-        android:id="@+id/textSupport"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Need support?\nEmail to k.w.schmitz@student.tue.nl"
-        android:autoLink="email"
-        android:textSize="16sp"
-        android:textColor="@android:color/black"
-        app:layout_constraintTop_toBottomOf="@id/textChat"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp"/>
-
     <!-- Dark Mode Switch -->
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/switchDarkMode"
@@ -39,8 +35,23 @@
         android:layout_height="wrap_content"
         android:text="Dark Mode"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/textSupport"
+        app:layout_constraintTop_toBottomOf="@id/textChat"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="40dp"/>
+
+    <TextView
+        android:id="@+id/textSupport"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:autoLink="email"
+        android:text="Need support?\nEmail to k.w.schmitz@student.tue.nl"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/switchDarkMode" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

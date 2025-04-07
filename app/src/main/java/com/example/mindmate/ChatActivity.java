@@ -75,6 +75,10 @@ public class ChatActivity extends AppCompatActivity {
         sendButton = findViewById(R.id.send_button);
         recyclerView = findViewById(R.id.message_list_view);
 
+        // Back button setup
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(v -> finish());
+
         messageAdapter = new MessageAdapter(new ArrayList<>(), currentUserId);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(messageAdapter);

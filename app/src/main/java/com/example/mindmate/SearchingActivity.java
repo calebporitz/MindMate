@@ -23,18 +23,29 @@ public class SearchingActivity extends AppCompatActivity {
     }
 
     private void setupNavigation() {
-        // Profile Button: navigates to ProfileActivity.
-        ImageButton navProfile = findViewById(R.id.nav_profile);
-        navProfile.setOnClickListener(v -> {
-            Intent intent = new Intent(SearchingActivity.this, ProfileActivity.class);
+
+        // Settings button
+        ImageButton btnSettings = findViewById(R.id.btnSettings);
+        btnSettings.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         });
 
+        // BOTTOM NAVIGATION
         // Chat List Button: navigates to ChatListActivity (chat overview).
         ImageButton navChatList = findViewById(R.id.nav_chat);
         navChatList.setOnClickListener(v -> {
             Intent intent = new Intent(SearchingActivity.this, ChatListActivity.class);
             startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+        });
+
+        // Profile Button: navigates to ProfileActivity.
+        ImageButton navProfile = findViewById(R.id.nav_profile);
+        navProfile.setOnClickListener(v -> {
+            Intent intent = new Intent(SearchingActivity.this, ProfileActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         });
 
         // Combined Match/Direct Chat Button.

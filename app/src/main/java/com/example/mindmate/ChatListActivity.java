@@ -2,6 +2,8 @@ package com.example.mindmate;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageButton;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +27,30 @@ public class ChatListActivity extends AppCompatActivity implements ChatAdapter.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_list);
+
+        // Settings button
+        ImageButton btnSettings = findViewById(R.id.btnSettings);
+        btnSettings.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        });
+
+        // BOTTOM NAVIGATION
+        // Searching Button: navigates to SearchingActivity.
+        ImageButton navSearching = findViewById(R.id.nav_find);
+        navSearching.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SearchingActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        });
+
+        // Profile List Button: navigates to ProfileActivity.
+        ImageButton navChatList = findViewById(R.id.nav_profile);
+        navChatList.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        });
 
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         db = FirebaseFirestore.getInstance();
