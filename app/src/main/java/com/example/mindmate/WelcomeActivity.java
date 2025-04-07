@@ -23,7 +23,7 @@ public class WelcomeActivity extends AppCompatActivity {
             Intent intent;
             if (currentUser != null) {
                 // If user is logged in, navigate to HomeActivity
-                intent = new Intent(WelcomeActivity.this, HomeActivity.class);
+                intent = new Intent(WelcomeActivity.this, SearchingActivity.class);
                 Toast.makeText(WelcomeActivity.this, "You are automatically logged in!", Toast.LENGTH_SHORT).show();
 
             } else {

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.auth.ActionCodeSettings;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -112,18 +113,27 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void sendEmailVerification(FirebaseUser user) {
-        user.sendEmailVerification()
+        // Define the continue URL where users will be redirected
+        String continueUrl = "https://proyolo-ks1.github.io/MindMatesWebHosting/";
+
+        // Get the action code settings to include the continue URL
+        ActionCodeSettings actionCodeSettings = ActionCodeSettings.newBuilder()
+                .setUrl(continueUrl)  // Set your custom URL
+                .setHandleCodeInApp(true)  // Let the app handle the verification
+                .build();
+
+        user.sendEmailVerification(actionCodeSettings)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(RegisterActivity.this, "Verification email sent! Check your inbox.", Toast.LENGTH_LONG).show();
                         startActivity(new Intent(RegisterActivity.this, TutorialActivity.class));
-
                         finish();
                     } else {
                         Toast.makeText(RegisterActivity.this, "Failed to send verification email.", Toast.LENGTH_LONG).show();
                     }
                 });
     }
+
 
     private void saveUserToFirestore(String userId, String email, String fullName) {
         Map<String, Object> userData = new HashMap<>();
