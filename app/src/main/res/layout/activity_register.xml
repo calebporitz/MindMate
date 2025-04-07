@@ -45,7 +45,7 @@
         <EditText
             android:id="@+id/editTextEmail"
             android:layout_width="300dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:background="@drawable/rounded_edit_text"
             android:hint="email@student.tue.nl"
             android:padding="8dp"
@@ -64,7 +64,7 @@
         <EditText
             android:id="@+id/editTextFullName"
             android:layout_width="300dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:background="@drawable/rounded_edit_text"
             android:hint="John Doe"
             android:padding="8dp"
@@ -83,7 +83,7 @@
         <EditText
             android:id="@+id/editTextPassword"
             android:layout_width="300dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:background="@drawable/rounded_edit_text"
             android:hint="Password"
             android:inputType="textPassword"
@@ -103,7 +103,7 @@
         <EditText
             android:id="@+id/editTextPasswordRepeat"
             android:layout_width="300dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:background="@drawable/rounded_edit_text"
             android:hint="Retype Password"
             android:inputType="textPassword"

@@ -30,7 +30,7 @@
         <EditText
             android:id="@+id/username_field"
             android:layout_width="300dp"
-            android:layout_height="50dp"
+            android:layout_height="48dp"
             android:hint="Email address"
             android:background="@drawable/rounded_edit_text"
             android:padding="12dp"
@@ -39,7 +39,7 @@
         <EditText
             android:id="@+id/password_field"
             android:layout_width="300dp"
-            android:layout_height="50dp"
+            android:layout_height="48dp"
             android:hint="Password"
             android:inputType="textPassword"
             android:background="@drawable/rounded_edit_text"
@@ -68,7 +68,7 @@
         <TextView
             android:id="@+id/textViewRegister"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:text="Register with a valid student email"
             android:textColor="@color/tue_red"
             android:textStyle="bold"

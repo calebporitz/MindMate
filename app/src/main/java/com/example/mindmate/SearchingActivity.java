@@ -52,11 +52,23 @@ public class SearchingActivity extends AppCompatActivity {
         });
 
         // Combined Match/Direct Chat Button.
-        // For testing, we want to simulate "no match" so that MatchFoundActivity pops up.
         Button matchChatButton = findViewById(R.id.buttonMatch);
         matchChatButton.setOnClickListener(v -> {
-            
-            Toast.makeText(SearchingActivity.this, "Looking for a match now...", Toast.LENGTH_SHORT).show();
+
+            // Ensure locationHelper has a method to get the location
+            locationHelper.requestLocation(location -> {
+                if (location != null) {
+                    double userLatitude = location.getLatitude();
+                    double userLongitude = location.getLongitude();
+                    // Format the toast message with the values
+                    Toast.makeText(SearchingActivity.this,
+                            String.format("Looking for a match near your location:\nLatitude: %.6f, Longitude: %.6f", userLatitude, userLongitude),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SearchingActivity.this, "Failed to retrieve location", Toast.LENGTH_SHORT).show();
+                }
+            });
+
 
             // Retrieve the selected course and checkbox values
             Spinner spinnerCourses = findViewById(R.id.spinnerCourses);
@@ -90,8 +102,6 @@ public class SearchingActivity extends AppCompatActivity {
                         locationHelper.requestLocation(location -> {
                             if (location != null) {
                                 Intent intent = new Intent(SearchingActivity.this, MatchFoundActivity.class);
-                                intent.putExtra("latitude", location.getLatitude());
-                                intent.putExtra("longitude", location.getLongitude());
                                 startActivity(intent);
                             } else {
                                 Toast.makeText(SearchingActivity.this, "Failed to retrieve location", Toast.LENGTH_SHORT).show();
@@ -102,7 +112,9 @@ public class SearchingActivity extends AppCompatActivity {
             } else {
                 // Show a fake delay before showing the toast
                 new Handler().postDelayed(() -> {
-                    Toast.makeText(SearchingActivity.this, "Could not find a match with current Preferences", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SearchingActivity.this,
+                            "Couldn't find a match with current Preferences\nEither wait for longer or change Preferences",
+                            Toast.LENGTH_LONG).show();
                 }, 1500);
             }
         });

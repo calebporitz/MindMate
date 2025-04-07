@@ -113,16 +113,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void sendEmailVerification(FirebaseUser user) {
-        // Define the continue URL where users will be redirected
-        String continueUrl = "https://proyolo-ks1.github.io/MindMatesWebHosting/";
 
-        // Get the action code settings to include the continue URL
-        ActionCodeSettings actionCodeSettings = ActionCodeSettings.newBuilder()
-                .setUrl(continueUrl)  // Set your custom URL
-                .setHandleCodeInApp(true)  // Let the app handle the verification
-                .build();
-
-        user.sendEmailVerification(actionCodeSettings)
+        user.sendEmailVerification()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(RegisterActivity.this, "Verification email sent! Check your inbox.", Toast.LENGTH_LONG).show();

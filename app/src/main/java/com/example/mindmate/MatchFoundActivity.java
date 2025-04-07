@@ -33,6 +33,6 @@ public class MatchFoundActivity extends AppCompatActivity {
             intent.putExtra("OTHER_USER_ID", matchedUserId);
             startActivity(intent);
             finish();  // Close MatchFoundActivity so user cannot go back.
-        }, 2000);  // 2000 milliseconds = 2 seconds
+        }, 5000);
     }
 }
