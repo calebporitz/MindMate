@@ -51,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
         currentUser = mAuth.getCurrentUser();
 
         // Find views
-        textUserName = findViewById(R.id.fullName);
+        textUserName = findViewById(R.id.username);
         textUserEmail = findViewById(R.id.userEmail);
         textCurrentlyStudying = findViewById(R.id.currentlyStudying);
         profileImage = findViewById(R.id.profileImage);
@@ -121,8 +121,8 @@ public class ProfileActivity extends AppCompatActivity {
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful() && !task.getResult().isEmpty()) {
                             for (DocumentSnapshot document : task.getResult()) {
-                                String fullName = document.getString("fullName");
-                                textUserName.setText(fullName != null ? fullName : "Unnamed User");
+                                String username = document.getString("username");
+                                textUserName.setText(username != null ? username : "Unnamed User");
 
                                 String studyStatus = document.getString("studyStatus");
                                 if (studyStatus != null && !studyStatus.isEmpty()) {
@@ -296,10 +296,10 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void showNameDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Update Account Name");
+        builder.setTitle("Update Username Name");
 
         final EditText input = new EditText(this);
-        input.setHint("Enter the new name");
+        input.setHint("Enter the new username");
         builder.setView(input);
 
         builder.setPositiveButton("Save", (dialog, which) -> {
@@ -307,7 +307,7 @@ public class ProfileActivity extends AppCompatActivity {
             if (!newName.isEmpty()) {
                 updateName(newName);
             } else {
-                Toast.makeText(ProfileActivity.this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfileActivity.this, "Username cannot be empty", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -318,27 +318,49 @@ public class ProfileActivity extends AppCompatActivity {
     private void updateName(String name) {
         if (currentUser == null) {
             Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         String userEmail = currentUser.getEmail();
 
-        db.collection("users").whereEqualTo("email", userEmail).get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        for (DocumentSnapshot document : task.getResult()) {
-                            db.collection("users").document(document.getId())
-                                    .update("fullName", name)
-                                    .addOnSuccessListener(aVoid -> {
-                                        textUserName.setText(name);
-                                        Toast.makeText(ProfileActivity.this, "Name updated!", Toast.LENGTH_SHORT).show();
-                                    })
-                                    .addOnFailureListener(e -> Toast.makeText(ProfileActivity.this, "Failed to update name", Toast.LENGTH_SHORT).show());
+        // Check if username already exists (excluding current user)
+        db.collection("users")
+                .whereEqualTo("username", name)
+                .get()
+                .addOnCompleteListener(checkTask -> {
+                    if (checkTask.isSuccessful() && !checkTask.getResult().isEmpty()) {
+                        for (DocumentSnapshot doc : checkTask.getResult()) {
+                            // If another user already has this username
+                            if (!doc.getString("email").equals(userEmail)) {
+                                Toast.makeText(ProfileActivity.this, "Username already taken!", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
                         }
-                    } else {
-                        Toast.makeText(ProfileActivity.this, "User not found in Firestore", Toast.LENGTH_SHORT).show();
                     }
+
+                    // Proceed to update if the username is available or only used by the same user
+                    db.collection("users")
+                            .whereEqualTo("email", userEmail)
+                            .get()
+                            .addOnCompleteListener(userTask -> {
+                                if (userTask.isSuccessful() && !userTask.getResult().isEmpty()) {
+                                    for (DocumentSnapshot document : userTask.getResult()) {
+                                        db.collection("users").document(document.getId())
+                                                .update("username", name)
+                                                .addOnSuccessListener(aVoid -> {
+                                                    textUserName.setText(name);
+                                                    Toast.makeText(ProfileActivity.this, "Name updated!", Toast.LENGTH_SHORT).show();
+                                                })
+                                                .addOnFailureListener(e ->
+                                                        Toast.makeText(ProfileActivity.this, "Failed to update name", Toast.LENGTH_SHORT).show());
+                                    }
+                                } else {
+                                    Toast.makeText(ProfileActivity.this, "User not found in Firestore", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                 });
     }
+
 
     private void showLogoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
