@@ -55,18 +55,18 @@
         <TextView
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:text="Enter your full name:"
+            android:text="Enter your username:"
             android:textColor="#787878"
             android:textSize="14sp"
             android:textStyle="bold"
             android:layout_marginTop="12dp" />
 
         <EditText
-            android:id="@+id/editTextFullName"
+            android:id="@+id/editTextUsername"
             android:layout_width="300dp"
             android:layout_height="48dp"
             android:background="@drawable/rounded_edit_text"
-            android:hint="John Doe"
+            android:hint="JohnDoe"
             android:padding="8dp"
             android:layout_marginTop="4dp" />
 

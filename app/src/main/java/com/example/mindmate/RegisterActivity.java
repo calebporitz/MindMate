@@ -15,13 +15,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.auth.ActionCodeSettings;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
-    private EditText editTextEmail, editTextFullName, editTextPassword, editTextPasswordRepeat;
+    private EditText editTextEmail, editTextUsername, editTextPassword, editTextPasswordRepeat;
     private Button buttonRegister;
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
@@ -38,7 +37,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         // Find UI elements
         editTextEmail = findViewById(R.id.editTextEmail);
-        editTextFullName = findViewById(R.id.editTextFullName); // Full Name instead of Username
+        editTextUsername = findViewById(R.id.editTextUsername);
         editTextPassword = findViewById(R.id.editTextPassword);
         editTextPasswordRepeat = findViewById(R.id.editTextPasswordRepeat);
         buttonRegister = findViewById(R.id.buttonRegister);
@@ -49,7 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void registerUser() {
         String email = editTextEmail.getText().toString().trim();
-        String fullName = editTextFullName.getText().toString().trim();
+        String username = editTextUsername.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
         String passwordRepeat = editTextPasswordRepeat.getText().toString().trim();
 
@@ -66,10 +65,10 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // Validate full name
-        if (fullName.isEmpty()) {
-            editTextFullName.setError("Enter your full name");
-            editTextFullName.requestFocus();
+        // Validate username
+        if (username.isEmpty()) {
+            editTextUsername.setError("Enter your username");
+            editTextUsername.requestFocus();
             return;
         }
 
@@ -90,10 +89,26 @@ public class RegisterActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
 
         // Proceed with Firebase authentication
-        createFirebaseUser(email, password, fullName);
+        checkIfUsernameExists(username, email, password);
     }
 
-    private void createFirebaseUser(String email, String password, String fullName) {
+    private void checkIfUsernameExists(String username, String email, String password) {
+        db.collection("users")
+                .whereEqualTo("username", username)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        progressBar.setVisibility(View.GONE);
+                        editTextUsername.setError("Username already taken");
+                        editTextUsername.requestFocus();
+                    } else {
+                        // Proceed with account creation if unique
+                        createFirebaseUser(email, password, username);
+                    }
+                });
+    }
+
+    private void createFirebaseUser(String email, String password, String username) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     progressBar.setVisibility(View.GONE);
@@ -101,7 +116,7 @@ public class RegisterActivity extends AppCompatActivity {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
                             // Save user data in Firestore immediately
-                            saveUserToFirestore(user.getUid(), email, fullName);
+                            saveUserToFirestore(user.getUid(), email, username);
 
                             // Send email verification
                             sendEmailVerification(user);
@@ -127,10 +142,10 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private void saveUserToFirestore(String userId, String email, String fullName) {
+    private void saveUserToFirestore(String userId, String email, String Username) {
         Map<String, Object> userData = new HashMap<>();
         userData.put("email", email);
-        userData.put("fullName", fullName);
+        userData.put("username", Username);
 
         db.collection("users").document(userId) // Store user by UID
                 .set(userData)
