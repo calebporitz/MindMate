@@ -1,10 +1,16 @@
 <resources>
     <string name="app_name">MindMate</string>
     <string-array name="course_options">
-        <item>Mathematics</item>
-        <item>Physics</item>
-        <item>Computer Science</item>
-        <item>Chemistry</item>
-        <item>Biology</item>
+        <item>Introduction to Programming</item>
+        <item>Calculus II</item>
+        <item>Data Structures and Algorithms</item>
+        <item>Mathematics for Computer Science</item>
+        <item>Computer Systems and Architecture</item>
+        <item>Discrete Mathematics</item>
+        <item>Software Engineering Fundamentals</item>
+        <item>Operating Systems</item>
+        <item>Database Systems</item>
+        <item>Computer Networks</item>
+        <item>Linear Algebra</item>
     </string-array>
 </resources>

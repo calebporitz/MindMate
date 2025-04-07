@@ -10,8 +10,8 @@
     <!-- Settings Icon (Top Left) -->
     <ImageButton
         android:id="@+id/btnSettings"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:src="@drawable/settings"
         android:contentDescription="Settings"
         android:background="?attr/selectableItemBackgroundBorderless"
@@ -88,13 +88,13 @@
 
         <!-- Checkbox: Other Filter Option -->
         <CheckBox
-            android:id="@+id/checkBoxOtherFilter"
+            android:id="@+id/checkBoxSameProgramm"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:background="@drawable/spinner_background_shape"
             android:checked="true"
             android:padding="12dp"
-            android:text="Other Filter Option"
+            android:text="Same Program Student"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/checkBoxSameYear" />
@@ -109,7 +109,7 @@
             android:textColor="@android:color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/checkBoxOtherFilter" />
+            app:layout_constraintTop_toBottomOf="@id/checkBoxSameProgramm" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
